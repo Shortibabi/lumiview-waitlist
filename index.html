@@ -1,1 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMIVIEW — See Differently</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0B0D12;
+    --panel: #12151C;
+    --line: #232833;
+    --paper: #F2F0EA;
+    --muted: #7A8090;
+    --violet: #8B6CFF;
+    --cyan: #29D9C4;
+    --amber: #FFB84D;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .lens {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--violet), var(--cyan), var(--amber), var(--violet));
+    animation: spin 6s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .lens, .gradient-bar, .float { animation: none !important; }
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 6vw;
+    position: relative;
+    z-index: 10;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+  }
+  .nav-tag { color: var(--muted); font-size: 0.72rem; }
+  .hero {
+    position: relative;
+    padding: 8vh 6vw 10vh;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .eyebrow {
+    color: var(--muted);
+    font-size: 0.72rem;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 6vw, 4.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    max-width: 14ch;
+  }
+  .gradient-word {
+    background: linear-gradient(100deg, var(--violet), var(--cyan) 45%, var(--amber) 90%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shift 8s ease-in-out infinite;
+  }
+  @keyframes shift {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
+  .sub { margin-top: 26px; max-width: 46ch; font-size: 1.08rem; color: #C5C8D2; }
+  .frame-row { display: flex; gap: 10px; margin-top: 40px; align-items: center; }
+  .frame-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1.5px solid var(--line); position: relative;
+  }
+  .frame-dot::after { content: ''; position: absolute; inset: 6px; border-radius: 50%; }
+  .f1::after { background: var(--violet); }
+  .f2::after { background: var(--cyan); }
+  .f3::after { background: var(--amber); }
+  .f4::after { background: #FF6E6E; }
+  .f5::after { background: #6EA8FF; }
+  .frame-label { color: var(--muted); font-size: 0.72rem; margin-left: 6px; }
+  .form-wrap { margin-top: 48px; max-width: 480px; }
+  .form-note { margin-top: 12px; font-size: 0.78rem; color: var(--muted); }
+  .count-line {
+    margin-top: 18px; display: flex; align-items: center; gap: 8px;
+    font-size: 0.85rem; color: var(--muted);
+  }
+  .count-num { color: var(--paper); font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+  .status-msg { margin-top: 16px; font-size: 0.9rem; display: none; }
+  .status-msg.show { display: block; }
+  .status-msg.ok { color: var(--cyan); }
+  .status-msg.err { color: var(--amber); }
+  .section { max-width: 1100px; margin: 0 auto; padding: 6vh 6vw; border-top: 1px solid var(--line); }
+  .section-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 40px; }
+  .section-head .mono { color: var(--muted); font-size: 0.72rem; }
+  .section-head h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 600; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  @media (max-width: 760px) { .grid3 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 26px; }
+  .card .lens { margin-bottom: 18px; }
+  .card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; margin-bottom: 10px; }
+  .card p { color: var(--muted); font-size: 0.9rem; }
+  footer { padding: 5vh 6vw 6vh; text-align: center; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body>
 
+<nav>
+  <div class="brand">
+    <div class="lens"></div>
+    LUMIVIEW
+  </div>
+  <div class="nav-tag mono">Concept Stage · 2026</div>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow mono">
+    <div class="lens" style="width:8px;height:8px;"></div>
+    AI smart glasses · Electrochromic lenses
+  </div>
+  <h1>See <span class="gradient-word">differently</span>,<br>every single day.</h1>
+  <p class="sub">
+    LUMIVIEW pairs hands-free AI — for work, learning, creation, and navigation — with lenses that shift color on demand. Five frame styles. One pair that adapts to you, not the other way around.
+  </p>
+
+  <div class="frame-row">
+    <div class="frame-dot f1"></div>
+    <div class="frame-dot f2"></div>
+    <div class="frame-dot f3"></div>
+    <div class="frame-dot f4"></div>
+    <div class="frame-dot f5"></div>
+    <span class="frame-label">5 frame styles, launching together</span>
+  </div>
+
+  <div class="form-wrap">
+    <a href="mailto:missgary80@gmail.com?subject=LUMIVIEW%20Waitlist%20Signup&body=Name%3A%20%0AEmail%3A%20" style="display:inline-flex;align-items:center;gap:10px;background:var(--paper);color:var(--ink);padding:15px 26px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.95rem;text-decoration:none;">
+      Join the waitlist →
+    </a>
+    <p class="form-note">Opens your email app. Just send it — you're on the list.</p>
+    <p class="form-note">No spam. One email when LUMIVIEW is ready to ship.</p>
+    <div class="status-msg" id="status-msg"></div>
+    <div class="count-line">
+      <div class="lens" style="width:6px;height:6px;animation-duration:4s;"></div>
+      <span><span class="count-num" id="count-num">—</span> people already waiting</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <span class="mono">How it works</span>
+    <h2>Three ideas, one pair of glasses</h2>
+  </div>
+  <div class="grid3">
+    <div class="card">
+      <div class="lens"></div>
+      <h3>Hands-free intelligence</h3>
+      <p>Real-time visual AI for work, learning, and navigation — no phone required, no hands taken away from what you're doing.</p>
+    </div>
+    <div class="card">
+      <div class="lens"></div>
+      <h3>Color-shifting lenses</h3>
+      <p>Electrochromic lenses change tone on demand, so one pair moves from morning meeting to evening out without a swap.</p>
+    </div>
+    <div class="card">
+      <div class="lens"></div>
+      <h3>Five frame styles</h3>
+      <p>Built to match how you actually look and dress, not a single generic silhouette forced on every wearer.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  LUMIVIEW is an early-stage concept from AYG Ventures. Joining the waitlist reserves no purchase and makes no commitment.
+</footer>
+
+</body>
+</html>
